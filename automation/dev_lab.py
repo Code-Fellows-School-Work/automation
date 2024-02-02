@@ -11,6 +11,30 @@ console = Console()
 def create_folder(directory):
     os.mkdir(directory)
 
+def remove_user(user_name):
+    """
+    Deletes a user and moves it to the recycle bin located in automation/assets/recycle
+    """
+    try:
+        # location of users
+        base_directory = "automation/assets"
+        
+        recycle_folder_name = "recycle"
+        target_path = os.path.join(base_directory, recycle_folder_name, user_name)  # Correct path to
+        
+        # used ChatGPT to figure out how to create directory if it doesn't exist
+        # create recycle directory if it doesn't exist
+        if not os.path.exists(os.path.join(base_directory, recycle_folder_name)):
+            os.makedirs(os.path.join(base_directory, recycle_folder_name))
+        
+        source_path = os.path.join(base_directory, user_name)
+        
+        # move the directory to the recycle bin
+        shutil.move(source_path, target_path)
+        
+    except FileNotFoundError:
+        console.print("[bold red] Directory or file not found [/bold red]")
+
 def list_files(directory):
     """
     Display all the files in the directory
@@ -25,9 +49,9 @@ def list_files(directory):
     except FileNotFoundError:
         console.print("[bold red] File not found [/bold red]")
 
-def delete_user(directory, file, target_directory):
+def move_file(directory, file, target_directory):
     """
-    Transfers a user file to the recycle folder. If recycle folder doesn't exist, also creates recycle folder
+    Move the given file from the current directory to the target directory
     """
     try:
         source_path = os.path.join(directory, file) # platform specific full file path
@@ -61,17 +85,15 @@ if __name__ == "__main__":
 
     while True:
     # console.print adds the formatting to the numbers
-        console.print("\n1. Create new directory\n2. Move file\n3. Search Files\n4. Exit")
+        console.print("\n1. Create new directory\n2. Delete user\n3. Search Files\n4. Exit")
         choice = Prompt.ask("Choose a task (Enter the number)")
 
         if choice == "1":
             directory = Prompt.ask("Enter the directory name")
             create_folder(directory)
-        # elif choice == "2":
-        #     directory = Prompt.ask("Enter the current directory of the file")
-        #     file = Prompt.ask("Enter the file to move")
-        #     target_directory = Prompt.ask("Enter the target directory to move file to")
-        #     move_file(directory, file, target_directory)
+        elif choice == "2":
+            user_name = Prompt.ask("Enter the user name")
+            remove_user(user_name)
         # elif choice == "3":
         #     directory = Prompt.ask("Enter the directory to search files")
         #     pattern = Prompt.ask("Enter the regex pattern to search for:")
